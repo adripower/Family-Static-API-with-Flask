@@ -6,6 +6,7 @@ update this file to implement the following already declared methods:
 - update_member: Should update a member from the self._members list
 - get_member: Should return a member from the self._members list
 """
+from flask import jsonify
 from random import randint
 
 class FamilyStructure:
@@ -36,18 +37,32 @@ class FamilyStructure:
     # read-only: Use this method to generate random members ID's when adding members into the list
     def _generateId(self):
         return randint(0, 99999999)
+        generated_id = self._next_id
+        self._next_id += 1
+        return generated_id
 
     def add_member(self, member):
         # fill this method and update the return
-        pass
+        # print(member["id"])
+
+        for elem in self._members:
+            if elem['id'] == member['id']:
+                return jsonify({'msg': 'Member already exist'}), 409
+        self._members.append(member)
+        return jsonify(self._members), 200
 
     def delete_member(self, id):
         # fill this method and update the return
-        pass
+        for member in self._members:
+            if member["id"] == id:
+                self._members.remove(member)
+                return {"done": True}
 
     def get_member(self, id):
         # fill this method and update the return
-        pass
+        for member in self._members:
+            if member["id"] == id:
+                return member
 
     # this method is done, it returns a list with all the family members
     def get_all_members(self):
